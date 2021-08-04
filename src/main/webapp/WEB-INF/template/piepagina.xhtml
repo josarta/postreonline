@@ -4,34 +4,32 @@
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
     <ui:composition>
-        
-        <div class="site-footer">
-            <div class="container">
-                <div class="download">
-                  
-                    <!-- SmartAddon BEGIN -->
-                    <script type="text/javascript">
-                        (function () {
-                            var s = document.createElement('script');
-                            s.type = 'text/javascript';
-                            s.async = true;
-                            s.src = 'http://s1' + '.smartaddon.com/share_addon.js';
-                            var j = document.getElementsByTagName('script')[0];
-                            j.parentNode.insertBefore(s, j);
-                        })();
-                    </script>
-
-                    <a href="http://www.smartaddon.com/?share" title="Share Button" onclick="return sa_tellafriend('', 'bookmarks')"><img alt="Share" src="http://bootflat.github.io/img/share.gif" border="0" /></a>
-                    <!-- SmartAddon END -->
-                </div>
-               
-                <hr class="dashed" />
-                <div class="copyright clearfix">
-                    <p><b>ADSI</b>  <a href="#">2141449-B</a></p>
-                    <p>Analisis y Desarrollo de Sistemas de Informacion.</p>
-                </div>
+                 
+      <footer class="footer pt-0">
+        <div class="row align-items-center justify-content-lg-between">
+          <div class="col-lg-6">
+            <div class="copyright text-center  text-lg-left  text-muted">
+              &copy; 2020 <a href="https://www.creative-tim.com" class="font-weight-bold ml-1" target="_blank">Creative Tim</a>
             </div>
-        </div>   
+          </div>
+          <div class="col-lg-6">
+            <ul class="nav nav-footer justify-content-center justify-content-lg-end">
+              <li class="nav-item">
+                <a href="https://www.creative-tim.com" class="nav-link" target="_blank">Creative Tim</a>
+              </li>
+              <li class="nav-item">
+                <a href="https://www.creative-tim.com/presentation" class="nav-link" target="_blank">About Us</a>
+              </li>
+              <li class="nav-item">
+                <a href="http://blog.creative-tim.com" class="nav-link" target="_blank">Blog</a>
+              </li>
+              <li class="nav-item">
+                <a href="https://github.com/creativetimofficial/argon-dashboard/blob/master/LICENSE.md" class="nav-link" target="_blank">MIT License</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </footer>
     </ui:composition>
 </html>
 

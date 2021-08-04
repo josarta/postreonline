@@ -1,7 +1,9 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://xmlns.jcp.org/jsf/html">
+      xmlns:html5="http://xmlns.jcp.org/jsf/passthrough"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
     <h:head>
         <meta charset="utf-8"/>
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
@@ -17,6 +19,11 @@
         <link rel="stylesheet" href="#{request.contextPath}/assets/vendor/@fortawesome/fontawesome-free/css/all.min.css" type="text/css"/>
         <!-- Argon CSS -->
         <link rel="stylesheet" href="#{request.contextPath}/assets/css/argon.css?v=1.2.0" type="text/css"/>
+        <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+        <meta http-equiv="Pragma" content="no-cache" />
+        <meta http-equiv="Expires" content="-1" />
+        
     </h:head>
     <h:body class="bg-default">
         <!-- Navbar -->
@@ -112,44 +119,50 @@
                                             <div class="input-group-prepend">
                                                 <span class="input-group-text"><i class="ni ni-hat-3"></i></span>
                                             </div>
-                                            <input class="form-control" placeholder="Tipo documento" type="text"/>
+
+                                            <h:selectOneMenu value="#{usuarioSession.usuReg.usuTipodocumento}" class="form-control" >
+                                                <f:selectItem itemLabel="Cedula" itemValue="Cedula"></f:selectItem>
+                                                <f:selectItem itemLabel="Cedula Ex" itemValue="Cedula Ex"></f:selectItem>
+                                                <f:selectItem itemLabel="T. Identidad" itemValue="T. Identidad"></f:selectItem>
+                                                <f:selectItem itemLabel="Otros" itemValue="Otros"></f:selectItem>
+                                            </h:selectOneMenu>   
                                         </div>
                                     </div>
-                                    
+
                                     <div class="form-group">
                                         <div class="input-group input-group-merge input-group-alternative mb-3">
                                             <div class="input-group-prepend">
                                                 <span class="input-group-text"><i class="ni ni-hat-3"></i></span>
                                             </div>
-                                            <input class="form-control" placeholder="Numero Documento" type="text"/>
+                                            <h:inputText value="#{usuarioSession.usuReg.usuNumeroducumento}" class="form-control" html5:placeholder="Numero Documento" />
                                         </div>
                                     </div>
-                                    
+
                                     <div class="form-group">
                                         <div class="input-group input-group-merge input-group-alternative mb-3">
                                             <div class="input-group-prepend">
                                                 <span class="input-group-text"><i class="ni ni-hat-3"></i></span>
                                             </div>
-                                            <input class="form-control" placeholder="Nombres" type="text"/>
+                                            <h:inputText value="#{usuarioSession.usuReg.usuNombres}"  class="form-control" html5:placeholder="Nombres" />
                                         </div>
                                     </div>
-                                    
+
                                     <div class="form-group">
                                         <div class="input-group input-group-merge input-group-alternative mb-3">
                                             <div class="input-group-prepend">
                                                 <span class="input-group-text"><i class="ni ni-hat-3"></i></span>
                                             </div>
-                                            <input class="form-control" placeholder="Apellidos" type="text"/>
+                                            <h:inputText value="#{usuarioSession.usuReg.usuApellidos}"  class="form-control" html5:placeholder="Apellidos" />
                                         </div>
                                     </div>
-                                    
-                                    
+
+
                                     <div class="form-group">
                                         <div class="input-group input-group-merge input-group-alternative mb-3">
                                             <div class="input-group-prepend">
                                                 <span class="input-group-text"><i class="ni ni-email-83"></i></span>
                                             </div>
-                                            <input class="form-control" placeholder="Correo" type="email"/>
+                                            <h:inputText value="#{usuarioSession.usuReg.usuCorreo}"  class="form-control" html5:placeholder="Correo" />
                                         </div>
                                     </div>
                                     <div class="form-group">
@@ -157,10 +170,10 @@
                                             <div class="input-group-prepend">
                                                 <span class="input-group-text"><i class="ni ni-lock-circle-open"></i></span>
                                             </div>
-                                            <input class="form-control" placeholder="Clave" type="password"/>
+                                            <h:inputSecret value="#{usuarioSession.usuReg.usuClave}"  class="form-control"/>
                                         </div>
                                     </div>
-                                    
+
                                     <div class="row my-4">
                                         <div class="col-12">
                                             <div class="custom-control custom-control-alternative custom-checkbox">
@@ -172,7 +185,7 @@
                                         </div>
                                     </div>
                                     <div class="text-center">
-                                        <button type="button" class="btn btn-primary mt-4">Crear cuenta</button>
+                                        <h:commandButton action="#{usuarioSession.registrarUsuario()}" class="btn btn-primary mt-4" value="Crear cuenta" />
                                     </div>
 
                                 </h:form>

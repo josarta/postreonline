@@ -1,6 +1,7 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:html5="http://xmlns.jcp.org/jsf/passthrough"
       xmlns:h="http://xmlns.jcp.org/jsf/html">
     <h:head>
         <meta charset="utf-8"/>
@@ -17,13 +18,19 @@
         <link rel="stylesheet" href="#{request.contextPath}/assets/vendor/@fortawesome/fontawesome-free/css/all.min.css" type="text/css"/>
         <!-- Argon CSS -->
         <link rel="stylesheet" href="#{request.contextPath}/assets/css/argon.css?v=1.2.0" type="text/css"/>
+        <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        
+        <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+        <meta http-equiv="Pragma" content="no-cache" />
+        <meta http-equiv="Expires" content="-1" />
+
     </h:head>
     <h:body class="bg-default">
         <!-- Navbar -->
         <nav id="navbar-main" class="navbar navbar-horizontal navbar-transparent navbar-main navbar-expand-lg navbar-light">
             <div class="container" >
                 <a class="navbar-brand" href="#">
-                  
+
                 </a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-collapse" aria-controls="navbar-collapse" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -44,7 +51,7 @@
                             </div>
                         </div>
                     </div>
-                   
+
                     <hr class="d-lg-none" />
                     <ul class="navbar-nav align-items-lg-center ml-lg-auto">
                         <li class="nav-item">
@@ -71,7 +78,7 @@
                                 <span class="nav-link-inner--text d-lg-none">Github</span>
                             </a>
                         </li>
-                       
+
                     </ul>
                 </div>
             </div>
@@ -124,7 +131,7 @@
                                             <div class="input-group-prepend">
                                                 <span class="input-group-text"><i class="ni ni-email-83"></i></span>
                                             </div>
-                                            <input class="form-control" placeholder="Correo" type="email"/>
+                                            <h:inputText value="#{usuarioSession.usuCorreo}" class="form-control" html5:placeholder="Correo" />
                                         </div>
                                     </div>
                                     <div class="form-group">
@@ -132,7 +139,7 @@
                                             <div class="input-group-prepend">
                                                 <span class="input-group-text"><i class="ni ni-lock-circle-open"></i></span>
                                             </div>
-                                            <input class="form-control" placeholder="Clave" type="password"/>
+                                            <h:inputSecret value="#{usuarioSession.usuClave}" class="form-control" html5:placeholder="Clave"/>
                                         </div>
                                     </div>
                                     <div class="custom-control custom-control-alternative custom-checkbox">
@@ -142,7 +149,7 @@
                                         </label>
                                     </div>
                                     <div class="text-center">
-                                        <button type="button" class="btn btn-primary my-4">Iniciar sesion</button>
+                                        <h:commandButton action="#{usuarioSession.iniciarSession()}"  class="btn btn-primary my-4" value="Iniciar sesion"/>
                                     </div>
                                 </h:form>
                             </div>
@@ -169,7 +176,7 @@
                         </div>
                     </div>
                     <div class="col-xl-6">
-                      
+
                     </div>
                 </div>
             </div>
