@@ -44,6 +44,12 @@ public class Rol implements Serializable {
     @Size(max = 45)
     @Column(name = "rol_descripcion")
     private String rolDescripcion;
+    @Size(max = 45)
+    @Column(name = "rol_icono")
+    private String rolIcono;
+    @Size(max = 45)
+    @Column(name = "rol_color")
+    private String rolColor;
     @JoinTable(name = "tbl_usuario_has_tbl_rol", joinColumns = {
         @JoinColumn(name = "fk_rolid", referencedColumnName = "rol_rolid")}, inverseJoinColumns = {
         @JoinColumn(name = "fk_usuarioid", referencedColumnName = "usu_usuarioid")})
@@ -89,6 +95,22 @@ public class Rol implements Serializable {
         this.usuarioCollection = usuarioCollection;
     }
 
+    public String getRolIcono() {
+        return rolIcono;
+    }
+
+    public void setRolIcono(String rolIcono) {
+        this.rolIcono = rolIcono;
+    }
+
+    public String getRolColor() {
+        return rolColor;
+    }
+
+    public void setRolColor(String rolColor) {
+        this.rolColor = rolColor;
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;
@@ -113,5 +135,5 @@ public class Rol implements Serializable {
     public String toString() {
         return "edu.sena.paraya.entity.Rol[ rolRolid=" + rolRolid + " ]";
     }
-    
+
 }
