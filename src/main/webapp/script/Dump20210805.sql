@@ -159,8 +159,10 @@ CREATE TABLE `tbl_rol` (
   `rol_rolid` int(11) NOT NULL AUTO_INCREMENT,
   `rol_nombre` varchar(45) DEFAULT NULL,
   `rol_descripcion` varchar(45) DEFAULT NULL,
+  `rol_icono` varchar(45) DEFAULT NULL,
+  `rol_color` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`rol_rolid`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -169,6 +171,7 @@ CREATE TABLE `tbl_rol` (
 
 LOCK TABLES `tbl_rol` WRITE;
 /*!40000 ALTER TABLE `tbl_rol` DISABLE KEYS */;
+INSERT INTO `tbl_rol` VALUES (1,'Administrador','administrador','planet','orange'),(2,'Cliente','cliente','satisfied','primary'),(3,'Empleado','empleado','user-run','yellow'),(4,'Proveedor','proveedor','cart','info');
 /*!40000 ALTER TABLE `tbl_rol` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -190,7 +193,7 @@ CREATE TABLE `tbl_usuario` (
   `usu_estado` tinyint(4) DEFAULT NULL,
   `usu_foto` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`usu_usuarioid`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -199,6 +202,7 @@ CREATE TABLE `tbl_usuario` (
 
 LOCK TABLES `tbl_usuario` WRITE;
 /*!40000 ALTER TABLE `tbl_usuario` DISABLE KEYS */;
+INSERT INTO `tbl_usuario` VALUES (1,'Cedula',79797979,'Jose L','Sarta A','josarta@misena.edu.co','12345',1,NULL);
 /*!40000 ALTER TABLE `tbl_usuario` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -225,6 +229,7 @@ CREATE TABLE `tbl_usuario_has_tbl_rol` (
 
 LOCK TABLES `tbl_usuario_has_tbl_rol` WRITE;
 /*!40000 ALTER TABLE `tbl_usuario_has_tbl_rol` DISABLE KEYS */;
+INSERT INTO `tbl_usuario_has_tbl_rol` VALUES (1,1),(1,2),(1,3),(1,4);
 /*!40000 ALTER TABLE `tbl_usuario_has_tbl_rol` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -300,4 +305,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-07-29 20:37:06
+-- Dump completed on 2021-08-05 22:03:28
