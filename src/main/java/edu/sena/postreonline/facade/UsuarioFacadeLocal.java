@@ -35,5 +35,11 @@ public interface UsuarioFacadeLocal {
     public Usuario recuperarClave(String usuCorreo);
 
     public Usuario usuarioLogin(String usuCorreo, String usuClave);
+
+    public List<Usuario> leertodos();
+
+    public Usuario buscarPorId(int usuarioId);
+    
+    
     
 }

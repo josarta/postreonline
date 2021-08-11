@@ -5,17 +5,27 @@
  */
 package edu.sena.postreonline.controladores;
 
+import edu.sena.postreonline.entity.Rol;
 import edu.sena.postreonline.entity.Usuario;
+import edu.sena.postreonline.facade.RolFacadeLocal;
 import edu.sena.postreonline.facade.UsuarioFacadeLocal;
 import edu.sena.postreonline.utilidades.Mail;
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.List;
 import javax.ejb.EJB;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.Part;
 import org.primefaces.PrimeFaces;
+import org.primefaces.shaded.commons.io.FilenameUtils;
 
 /**
  *
@@ -27,7 +37,10 @@ public class UsuarioSession implements Serializable {
 
     @EJB
     UsuarioFacadeLocal usuarioFacadeLocal;
-    
+
+    @EJB
+    RolFacadeLocal rolFacadeLocal;
+
     private Part archivoFoto;
 
     /**
@@ -35,8 +48,12 @@ public class UsuarioSession implements Serializable {
      */
     private Usuario usuReg = new Usuario();
     private Usuario usuLogin = new Usuario();
+    private Usuario usuTemporal = new Usuario();
+    private boolean tablaFilas;
+
     private String usuCorreo = "";
     private String usuClave = "";
+    private SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmssSSS");
 
     public UsuarioSession() {
     }
@@ -76,7 +93,6 @@ public class UsuarioSession implements Serializable {
 
     }
 
-    
     public void recuperarClave() {
         usuReg = null;
         usuReg = usuarioFacadeLocal.recuperarClave(usuCorreo);
@@ -133,21 +149,108 @@ public class UsuarioSession implements Serializable {
         }
     }
 
-    public void cargarFotoPerfil(){
-        System.out.println("cargo foto " + archivoFoto.getName() + " - " +archivoFoto.getContentType());
-        
-        
+    public void cargarFotoPerfil() {
+        if (archivoFoto != null) {
+            if (archivoFoto.getSize() > 700000) {
+                PrimeFaces.current().executeScript("Swal.fire({"
+                        + "  title: 'Error!',"
+                        + "  text: 'El archivo excede el tamaño permitido',"
+                        + "  icon: 'error',"
+                        + "  confirmButtonText: 'Cambie de archivo !!!'"
+                        + "})");
+            } else if (archivoFoto.getContentType().equalsIgnoreCase("image/png") || archivoFoto.getContentType().equalsIgnoreCase("image/jpeg")) {
+                File carpeta = new File("C:/imgpostres/Usuarios/Perfil");
+                if (!carpeta.exists()) {
+                    carpeta.mkdirs();
+                } else {
+                    try (InputStream is = archivoFoto.getInputStream()) {
+                        Calendar hoy = Calendar.getInstance();
+                        String nuevonombre = sdf.format(hoy.getTime()) + ".";
+                        nuevonombre += FilenameUtils.getExtension(archivoFoto.getSubmittedFileName());
+                        Files.copy(is, (new File(carpeta, nuevonombre)).toPath(), StandardCopyOption.REPLACE_EXISTING);
+                        usuLogin.setUsuFoto(nuevonombre);
+                        usuarioFacadeLocal.edit(usuLogin);
+                    } catch (Exception e) {
+                        PrimeFaces.current().executeScript("Swal.fire({"
+                                + "  title: 'Error!',"
+                                + "  text: 'No se pudo realizar esta accion',"
+                                + "  icon: 'error',"
+                                + "  confirmButtonText: 'Intente mas tarde !!!'"
+                                + "})");
+                    }
+                }
+            } else {
+                PrimeFaces.current().executeScript("Swal.fire({"
+                        + "  title: 'Error!',"
+                        + "  text: 'El archivo ingresado no es una imagen',"
+                        + "  icon: 'error',"
+                        + "  confirmButtonText: 'Cambie de archivo !!!'"
+                        + "})");
+            }
+        } else {
+            PrimeFaces.current().executeScript("Swal.fire({"
+                    + "  title: 'Error!',"
+                    + "  text: 'No se pudo realizar esta accion',"
+                    + "  icon: 'error',"
+                    + "  confirmButtonText: 'Intente mas tarde !!!'"
+                    + "})");
+        }
+        PrimeFaces.current().executeScript("document.getElementById('resetFromImg').click();");
     }
-    
-    
+
     public void registrarUsuario() {
         try {
             usuReg.setUsuEstado(Short.parseShort("1"));
             if (usuarioFacadeLocal.registroUsusario(usuReg)) {
+
+                PrimeFaces.current().executeScript("Swal.fire({"
+                        + "  title: 'Usuario',"
+                        + "  text: 'Registrado correctamente',"
+                        + "  icon: 'success',"
+                        + "  confirmButtonText: 'OK'"
+                        + "})");
+
             } else {
+
+                PrimeFaces.current().executeScript("Swal.fire({"
+                        + "  title: 'Error!',"
+                        + "  text: 'No se pudo realizar esta accion',"
+                        + "  icon: 'error',"
+                        + "  confirmButtonText: 'Intente mas tarde !!!'"
+                        + "})");
             }
-        } catch (Exception e) {
+        } catch (NumberFormatException e) {
+            PrimeFaces.current().executeScript("Swal.fire({"
+                    + "  title: 'Error!',"
+                    + "  text: 'No se pudo realizar esta accion',"
+                    + "  icon: 'error',"
+                    + "  confirmButtonText: 'Intente mas tarde !!!'"
+                    + "})");
         }
+    }
+    
+    public void removerRol(int rolId){
+        rolFacadeLocal.removerRol(usuTemporal.getUsuUsuarioid(), rolId);
+        usuTemporal = usuarioFacadeLocal.buscarPorId(usuTemporal.getUsuUsuarioid());
+    }
+    
+    public void addRol(int rolId){
+        rolFacadeLocal.addRol(usuTemporal.getUsuUsuarioid(), rolId);
+        usuTemporal = usuarioFacadeLocal.buscarPorId(usuTemporal.getUsuUsuarioid());
+    }
+    
+    
+    
+    public List<Rol> todosRoles(){
+        return  rolFacadeLocal.findAll();
+    }
+
+    public void cargarUsuarioTemporal(Usuario usu) {
+        this.usuTemporal = usu;
+    }
+
+    public List<Usuario> leertodos() {
+        return usuarioFacadeLocal.leertodos();
     }
 
     public Usuario getUsuReg() {
@@ -188,6 +291,22 @@ public class UsuarioSession implements Serializable {
 
     public void setArchivoFoto(Part archivoFoto) {
         this.archivoFoto = archivoFoto;
+    }
+
+    public Usuario getUsuTemporal() {
+        return usuTemporal;
+    }
+
+    public void setUsuTemporal(Usuario usuTemporal) {
+        this.usuTemporal = usuTemporal;
+    }
+
+    public boolean isTablaFilas() {
+        return tablaFilas;
+    }
+
+    public void setTablaFilas(boolean tablaFilas) {
+        this.tablaFilas = tablaFilas;
     }
 
 }

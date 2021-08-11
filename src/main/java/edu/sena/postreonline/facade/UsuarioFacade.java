@@ -6,6 +6,7 @@
 package edu.sena.postreonline.facade;
 
 import edu.sena.postreonline.entity.Usuario;
+import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -71,5 +72,20 @@ public class UsuarioFacade extends AbstractFacade<Usuario> implements UsuarioFac
         } catch (Exception e) {
             return false;
         }
+    }
+
+    @Override
+    public List<Usuario> leertodos() {
+        em.getEntityManagerFactory().getCache().evictAll();
+        Query q = em.createQuery("SELECT u FROM Usuario u");
+        return q.getResultList();
+    }
+
+    @Override
+    public Usuario buscarPorId(int usuarioId) {
+        em.getEntityManagerFactory().getCache().evictAll();
+        Query q = em.createQuery("SELECT u FROM Usuario u WHERE u.usuUsuarioid = :usuarioId");
+        q.setParameter("usuarioId", usuarioId);
+        return (Usuario) q.getSingleResult();
     }
 }

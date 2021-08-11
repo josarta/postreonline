@@ -15,17 +15,18 @@
                                 <div class="col-lg-3 order-lg-2">
                                     <div class="card-profile-image">
                                         <a href="#">
-                                            <img class="rounded-circle" data-src="#{request.contextPath}/assets/img/theme/team-4.jpg" src="#{request.contextPath}/assets/img/theme/team-4.jpg" lazy="loaded"/>
+                                            <h:graphicImage id="fotoPerfil" value="/imagesPt/#{usuarioSession.usuLogin.usuFoto}"  class="rounded-circle" ></h:graphicImage>
                                         </a>
                                     </div>
                                 </div>
                                 <div class="text-center">
-                                    <h:inputFile value="#{usuarioSession.archivoFoto}" onchange="$('#carga\\:btnCarga').click()" style="display: none" id="fotop" html5:name="fotop" ></h:inputFile>
+                                    <h:inputFile value="#{usuarioSession.archivoFoto}" onchange="$('#carga\\:btnCarga').click()" style="display: none" id="fotop"  ></h:inputFile>
                                     
                                     <h:commandButton style="display: none" id="btnCarga" action="#{usuarioSession.cargarFotoPerfil()}" value="enviar">
-                                        <f:ajax event="click" execute="carga:fotop"></f:ajax>    
+                                        <f:ajax event="click" render="fotoPerfil fotoAvatar" execute="carga:fotop"></f:ajax>    
                                     </h:commandButton>
-
+                                    <button id="resetFromImg" style="display: none" class="btn btn-icon btn-info" type="reset"></button>
+                                    
                                     <button onclick="$('#carga\\:fotop').click()" class="btn btn-icon btn-info" type="button">
                                         <span class="btn-inner--icon"><i class="ni ni-satisfied"></i></span>
                                         <span class="btn-inner--text">Cargar foto</span>

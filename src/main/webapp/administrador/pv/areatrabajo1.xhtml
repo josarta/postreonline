@@ -1,0 +1,177 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:html5="http://xmlns.jcp.org/jsf/passthrough"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    <ui:composition>
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="card">
+                    <div class="card-header border-0">
+                        <div class="row align-items-center">
+                            <div class="col">
+                                <h3 class="mb-0">Usuarios</h3>
+                            </div>
+                            <div class="col text-right">
+                                <a href="#!" class="btn btn-sm btn-primary">Reset Claves</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <!-- Projects table -->
+                        <table class="table align-items-center table-flush">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th scope="col">Tipo Documento</th>
+                                    <th scope="col">Documento</th>
+                                    <th scope="col">Nombres</th>
+                                    <th scope="col">Correo</th>
+                                    <th scope="col">Estado</th>
+                                    <th scope="col">Foto</th>
+                                    <th scope="col">Roles</th>
+                                    <th scope="col">Acciones</th>
+
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <h:form>   
+                                    <c:forEach items="#{usuarioSession.leertodos()}" var="usu">
+
+                                        <tr>
+                                            <th scope="row">
+                                                #{usu.usuTipodocumento}
+                                            </th>
+                                            <td>
+                                                #{usu.usuNumeroducumento}
+                                            </td>
+                                            <td>
+                                                #{usu.usuNombres}  #{usu.usuApellidos}
+                                            </td>
+                                            <td>
+                                                #{usu.usuCorreo}  
+                                            </td>
+                                            <td>
+                                                #{usu.usuEstado} 
+                                            </td>
+
+                                            <td>
+                                                <div class="media align-items-center">
+                                                    <span class="avatar avatar-sm rounded-circle">
+                                                        <h:graphicImage  value="/imagesPt/#{usu.usuFoto}"   ></h:graphicImage>
+                                                    </span>
+                                                </div>
+                                            </td>
+
+                                            <td>
+                                                <!-- Button trigger modal -->
+                                                <h:commandButton action="#{usuarioSession.cargarUsuarioTemporal(usu)}" class="btn btn-primary" html5:data-toggle="modal" html5:data-target="#exampleModal" value="Ver">
+                                                    <f:ajax render=":modalRoles" ></f:ajax> 
+                                                </h:commandButton>
+                                            </td>
+
+                                            <td></td>
+
+                                        </tr>
+                                    </c:forEach>
+                                </h:form>
+
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+
+
+
+        <!-- Modal -->
+        <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <h:form id="modalRoles">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">#{usuarioSession.usuTemporal.usuNombres} #{usuarioSession.usuTemporal.usuApellidos}</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+
+                        <div class="modal-body">
+                            <div class="card">
+                                <div class="table-responsive">
+                                    <!-- Projects table -->
+                                    <table class="table align-items-center table-flush">
+                                        <thead class="thead-light">
+                                            <tr>
+                                                <th scope="col">Activos</th>
+                                                <th scope="col">Inactivos</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <h:panelGroup id="miPanel">
+
+                                                <ui:repeat value="#{usuarioSession.todosRoles()}" var="rolTodos">
+
+                                                    <ui:param  name="valorIn" value="#{true}"></ui:param>
+
+                                                    <ui:repeat value="#{usuarioSession.usuTemporal.rolCollection}" var="rolUsu">
+                                                        <c:if test="#{rolTodos.rolRolid == rolUsu.rolRolid}">
+                                                            <tr>
+                                                                <td scope="row">
+                                                                    <h:commandLink action="#{usuarioSession.removerRol(rolTodos.rolRolid)}" class="nav-link">
+                                                                        <i class="ni ni-#{rolTodos.rolIcono} text-#{rolTodos.rolColor}"></i>
+                                                                        <span class="nav-link-text">#{rolTodos.rolNombre}</span>
+                                                                        <f:ajax render="modalRoles:miPanel"></f:ajax>   
+                                                                    </h:commandLink>
+                                                                </td>
+                                                                <td>
+#{rolTodos.rolRolid == rolUsu.rolRolid}
+                                                                </td>
+                                                            </tr>
+                                                            <ui:param  name="valorIn" value="#{false}"></ui:param>
+                                                        </c:if>
+                                                    </ui:repeat>
+
+
+
+                                                    <c:if test="${valorIn}">
+                                                        <tr>
+                                                            <td scope="row">
+#{rolTodos.rolRolid == rolUsu.rolRolid}
+                                                            </td>
+                                                            <td>
+                                                                <h:commandLink action="#{usuarioSession.addRol(rolTodos.rolRolid)}" class="nav-link">
+                                                                    <i class="ni ni-#{rolTodos.rolIcono} text-#{rolTodos.rolColor}"></i>
+                                                                    <span class="nav-link-text">#{rolTodos.rolNombre}</span>
+                                                                    <f:ajax render="modalRoles:miPanel"></f:ajax>   
+                                                                </h:commandLink>
+                                                            </td>
+                                                        </tr>
+                                                    </c:if>
+                                                </ui:repeat>
+
+
+                                            </h:panelGroup>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                        </div>
+                    </h:form>
+                </div>
+            </div>
+        </div>
+
+
+    </ui:composition>
+</html>
+
