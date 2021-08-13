@@ -1,0 +1,171 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:html5="http://xmlns.jcp.org/jsf/passthrough"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:p="http://primefaces.org/ui">
+    <ui:composition>
+
+
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="card">
+                    <div class="card-header border-0">
+                        <div class="row align-items-center">
+                            <div class="col">
+                                <h3 class="mb-0">Categorias</h3>
+                            </div>
+                            <div class="col text-right">
+                                <a href="#!" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#exampleModalNuevo">Nuevo</a>
+                            </div>
+                        </div>
+                    </div>  
+                    <h:form id="datosTabla">
+                        <div class="table-responsive">
+                            <!-- Projects table -->
+                            <table class="table align-items-center table-flush">
+                                <thead class="thead-light">
+                                    <tr>
+                                        <th scope="col">Numero de categoria</th>
+                                        <th scope="col">Nombre</th>
+                                        <th scope="col">Descripcion</th>
+                                        <th scope="col">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+
+                                    <c:forEach items="#{categoriaView.todasCategorias}" var="cat">
+
+                                        <tr>
+                                            <th scope="row">
+                                                #{cat.catCategoriaid}
+                                            </th>
+                                            <td>
+                                                #{cat.catNombre}
+                                            </td>
+                                            <td>
+                                                #{cat.catDescripcion}
+                                            </td>
+
+                                            <td>
+                                                <h:commandButton action="#{categoriaView.removerCategoria(cat)}" class="btn btn-success" value="Rem">
+                                                    <f:ajax render="datosTabla" ></f:ajax> 
+                                                </h:commandButton>
+
+                                                <h:commandButton action="#{categoriaView.cargarCategoriaTemporal(cat)}" class="btn btn-danger" html5:data-toggle="modal" html5:data-target="#exampleModalActualizar" value="Act">
+                                                    <f:ajax render=":modalActualizar" ></f:ajax> 
+                                                </h:commandButton>
+
+                                            </td>
+
+                                        </tr>
+
+                                    </c:forEach>
+
+                                </tbody>
+                            </table>
+                        </div> 
+                    </h:form>
+                </div>
+            </div>
+
+        </div>
+
+
+
+
+
+
+        <!-- Modal -->
+        <div class="modal fade" id="exampleModalActualizar" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <h:form id="modalActualizar">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">#{categoriaView.catTemporal.catNombre}</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+
+                        <div class="modal-body">
+                            <div class="card">
+                                <div class="form-group">
+                                    <div class="input-group input-group-merge input-group-alternative mb-3">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text"><i class="ni ni-hat-3"></i></span>
+                                        </div>
+                                        <h:inputText value="#{categoriaView.catTemporal.catNombre}" class="form-control" html5:placeholder="Nombre categoria" />
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="input-group input-group-merge input-group-alternative mb-3">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text"><i class="ni ni-hat-3"></i></span>
+                                        </div>
+                                        <h:inputText value="#{categoriaView.catTemporal.catDescripcion}"  class="form-control" html5:placeholder="Descripcion" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <h:commandButton action="#{categoriaView.actualizarTempDatos()}" class="btn btn-primary" value="Actualizar" />
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                        </div>
+                    </h:form>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Modal -->
+        <div class="modal fade" id="exampleModalNuevo" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <h:form id="modalNuevo">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Nueva categoria</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+
+                        <div class="modal-body">
+                            <div class="card">
+                                
+                                <div class="form-group">
+                                    <div class="input-group input-group-merge input-group-alternative mb-3">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text"><i class="ni ni-hat-3"></i></span>
+                                        </div>
+                                        <h:inputText value="#{categoriaView.catNueva.catNombre}" class="form-control" html5:placeholder="Nombre" />
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="input-group input-group-merge input-group-alternative mb-3">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text"><i class="ni ni-hat-3"></i></span>
+                                        </div>
+                                        <h:inputText value="#{categoriaView.catNueva.catDescripcion}"  class="form-control" html5:placeholder="Descripcion" />
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <h:commandButton action="#{categoriaView.registroCategoria()}" class="btn btn-primary" value="Registrar" />
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                        </div>
+                    </h:form>
+                </div>
+            </div>
+        </div>
+
+    </ui:composition>
+</html>
+

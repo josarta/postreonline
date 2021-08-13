@@ -29,5 +29,11 @@ public interface CategoriaFacadeLocal {
     List<Categoria> findRange(int[] range);
 
     int count();
+
+    public boolean registroCategoria(Categoria catReg);
+
+    public List<Categoria> leertodos();
+
+    public Categoria buscarPorId(int catId);
     
 }

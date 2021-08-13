@@ -19,9 +19,13 @@ import java.io.Serializable;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Objects;
+import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
+import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.Part;
 import org.primefaces.PrimeFaces;
@@ -54,8 +58,15 @@ public class UsuarioSession implements Serializable {
     private String usuCorreo = "";
     private String usuClave = "";
     private SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmssSSS");
+    private List<Rol> todosLosRoles = new ArrayList<>();
+    private List<Rol> rolesSinAsignar = new ArrayList<>();
 
     public UsuarioSession() {
+    }
+
+    @PostConstruct
+    public void cargaInicial() {
+        todosLosRoles.addAll(rolFacadeLocal.findAll());
     }
 
     public void iniciarSession() {
@@ -133,6 +144,25 @@ public class UsuarioSession implements Serializable {
     public void actualizarMisDatos() {
         try {
             usuarioFacadeLocal.edit(usuLogin);
+            PrimeFaces.current().executeScript("Swal.fire({"
+                    + "  title: 'Datos personales',"
+                    + "  text: 'Actualizados correctamente',"
+                    + "  icon: 'success',"
+                    + "  confirmButtonText: 'OK'"
+                    + "})");
+        } catch (Exception e) {
+            PrimeFaces.current().executeScript("Swal.fire({"
+                    + "  title: 'Error!',"
+                    + "  text: 'No se pudo actualizar',"
+                    + "  icon: 'error',"
+                    + "  confirmButtonText: 'Intente mas tarde !!!'"
+                    + "})");
+        }
+    }
+
+    public void actualizarTempDatos() {
+        try {
+            usuarioFacadeLocal.edit(usuTemporal);
             PrimeFaces.current().executeScript("Swal.fire({"
                     + "  title: 'Datos personales',"
                     + "  text: 'Actualizados correctamente',"
@@ -228,25 +258,77 @@ public class UsuarioSession implements Serializable {
                     + "})");
         }
     }
-    
-    public void removerRol(int rolId){
+
+    public void addMessage(FacesMessage.Severity severity, String summary, String detail) {
+        FacesContext.getCurrentInstance().
+                addMessage(null, new FacesMessage(severity, summary, detail));
+    }
+
+    public void showInfo() {
+        addMessage(FacesMessage.SEVERITY_INFO, "Info Message", "Message Content");
+    }
+
+    public void resetClaveTodosUsuarios() {
+        List<Usuario> todaListaUsuarios = usuarioFacadeLocal.findAll();
+        todaListaUsuarios.remove(usuLogin);
+        for (Usuario lUsu : todaListaUsuarios) {
+            try {
+                double valor = 100000 * Math.random();
+                lUsu.setUsuClave("NW-" + (int) valor);
+                usuarioFacadeLocal.edit(lUsu);
+                Mail.recuperarClaves(lUsu.getUsuCorreo(), lUsu.getUsuClave());
+                addMessage(FacesMessage.SEVERITY_INFO, "Correo enviado", "Usuario," + lUsu.getUsuNombres() + " " + lUsu.getUsuApellidos());
+            } catch (Exception e) {
+                addMessage(FacesMessage.SEVERITY_ERROR, "No se pudo enviar el correo", "Usuario," + lUsu.getUsuNombres() + " " + lUsu.getUsuApellidos());
+            }
+        }
+
+    }
+
+    public void removerRol(int rolId) {
         rolFacadeLocal.removerRol(usuTemporal.getUsuUsuarioid(), rolId);
         usuTemporal = usuarioFacadeLocal.buscarPorId(usuTemporal.getUsuUsuarioid());
+        actualizaRoles();
     }
-    
-    public void addRol(int rolId){
+
+    public void addRol(int rolId) {
         rolFacadeLocal.addRol(usuTemporal.getUsuUsuarioid(), rolId);
         usuTemporal = usuarioFacadeLocal.buscarPorId(usuTemporal.getUsuUsuarioid());
+        actualizaRoles();
     }
-    
-    
-    
-    public List<Rol> todosRoles(){
-        return  rolFacadeLocal.findAll();
+
+    public List<Rol> todosRoles() {
+        return rolFacadeLocal.findAll();
+    }
+
+    public void actualizaRoles() {
+        rolesSinAsignar.clear();
+        for (Rol rolPrincial : todosLosRoles) {
+            boolean flag = true;
+            for (Rol rolUsu : this.usuTemporal.getRolCollection()) {
+                if (Objects.equals(rolPrincial.getRolRolid(), rolUsu.getRolRolid())) {
+                    flag = false;
+                    break;
+                }
+            }
+            if (flag) {
+                rolesSinAsignar.add(rolPrincial);
+            }
+        }
     }
 
     public void cargarUsuarioTemporal(Usuario usu) {
         this.usuTemporal = usu;
+        actualizaRoles();
+    }
+
+    public void cambiarEstado(Usuario usu) {
+        if (usu.getUsuEstado() == Short.parseShort("0")) {
+            usu.setUsuEstado(Short.parseShort("1"));
+        } else {
+            usu.setUsuEstado(Short.parseShort("0"));
+        }
+        usuarioFacadeLocal.edit(usu);
     }
 
     public List<Usuario> leertodos() {
@@ -307,6 +389,22 @@ public class UsuarioSession implements Serializable {
 
     public void setTablaFilas(boolean tablaFilas) {
         this.tablaFilas = tablaFilas;
+    }
+
+    public List<Rol> getTodosLosRoles() {
+        return todosLosRoles;
+    }
+
+    public void setTodosLosRoles(List<Rol> todosLosRoles) {
+        this.todosLosRoles = todosLosRoles;
+    }
+
+    public List<Rol> getRolesSinAsignar() {
+        return rolesSinAsignar;
+    }
+
+    public void setRolesSinAsignar(List<Rol> rolesSinAsignar) {
+        this.rolesSinAsignar = rolesSinAsignar;
     }
 
 }
