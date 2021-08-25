@@ -1,0 +1,175 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:html5="http://xmlns.jcp.org/jsf/passthrough"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    <h:head>
+
+        <meta charset="utf-8"/>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+        <title>Portal postres</title>
+        <meta name="description" content=""/>
+        <!-- 
+        Volton Template
+        http://www.templatemo.com/tm-441-volton
+        -->
+        <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+        <link rel="stylesheet" href="sales/css/normalize.css"/>
+        <link rel="stylesheet" href="sales/css/font-awesome.css"/>
+        <link rel="stylesheet" href="sales/css/bootstrap.min.css"/>
+        <link rel="stylesheet" href="sales/css/templatemo-style.css"/>
+        <script src="sales/js/vendor/modernizr-2.6.2.min.js"></script>
+
+        <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+        <meta http-equiv="Pragma" content="no-cache" />
+        <meta http-equiv="Expires" content="-1" />
+
+    </h:head>
+    <h:body >
+        <!--[if lt IE 7]>
+    <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+<![endif]-->
+
+        <div class="responsive-header visible-xs visible-sm">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="top-section">
+                            <div class="profile-image">
+                                <img src="sales/img/postre-facil-gelatina-de-mosaico-500x500.jpg" alt="Volton"/>
+                            </div>
+                            <div class="profile-content">
+                                <h3 class="profile-title">Postres</h3>
+                                <p class="profile-description">On line...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <a href="#" class="toggle-menu"><i class="fa fa-bars"></i></a>
+                <div class="main-navigation responsive-menu">
+                    <ul class="navigation">
+                        <li><a href="#top"><i class="fa fa-home"></i>Inicio</a></li>                        
+                        <c:forEach items="#{categoriaView.todasCategorias}" var="cat" varStatus="pos">
+                            <li><a href="#categoria_#{pos.index}"><i class="fa fa-pencil"></i>#{cat.catNombre}</a></li>
+                        </c:forEach>
+                    </ul>
+                     <hr/>
+                <ul class="">
+                    <li> <a href="index.xhtml"><i class="fa fa-user"></i>Empleados</a> </li>
+                </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- SIDEBAR -->
+        <div class="sidebar-menu hidden-xs hidden-sm">
+            <div class="top-section">
+                <div class="profile-image">
+                     <img src="sales/img/postre-facil-gelatina-de-mosaico-500x500.jpg" alt="Volton"/>
+                </div>
+                <h3 class="profile-title">Postres</h3>
+                <p class="profile-description">On line...</p>
+            </div> <!-- top-section -->
+            <div class="main-navigation">
+                <ul class="navigation">
+                    <li><a href="#top"><i class="fa fa-globe"></i>Inicio</a></li>
+                    <c:forEach items="#{categoriaView.todasCategorias}" var="cat" varStatus="pos">
+                        <li><a href="#categoria_#{pos.index}"><i class="fa fa-pencil"></i>#{cat.catNombre}</a></li>
+                    </c:forEach>
+                </ul>
+                <hr/>
+                <ul class="">
+                    <li> <a href="index.xhtml"><i class="fa fa-user"></i>Empleados</a> </li>
+                </ul>
+               
+            </div> <!-- .main-navigation -->
+            <div class="social-icons">
+                <ul>
+                    <li><a href="#"><i class="fa fa-facebook"></i></a></li>
+                    <li><a href="#"><i class="fa fa-twitter"></i></a></li>
+                    <li><a href="#"><i class="fa fa-linkedin"></i></a></li>
+                    <li><a href="#"><i class="fa fa-google-plus"></i></a></li>
+                    <li><a href="#"><i class="fa fa-youtube"></i></a></li>
+                    <li><a href="#"><i class="fa fa-rss"></i></a></li>
+                </ul>
+            </div> <!-- .social-icons -->
+        </div> <!-- .sidebar-menu -->
+
+
+        <div class="banner-bg" id="top">
+            <div class="banner-overlay"></div>
+            <div class="welcome-text">
+                <h2>Soy don  | Gato</h2>
+                <h5>Vengo a endulzarles el corazon</h5>
+            </div>
+        </div>
+
+        <!-- MAIN CONTENT -->
+        <div class="main-content">
+            <div class="fluid-container">
+
+                <div class="content-wrapper">
+
+                    <c:forEach items="#{categoriaView.todasCategorias}" var="cat" varStatus="pos">
+
+
+                        <!-- PROJECTS -->
+                        <div class="page-section" id="categoria_#{pos.index}">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <h4 class="widget-title">#{cat.catNombre}</h4>
+                                    <p>#{cat.catDescripcion}</p>
+                                </div>
+                            </div>
+                            <div class="row projects-holder">
+
+
+                                <c:forEach items="#{cat.productoCollection}" var="pro">
+                                    <c:forEach items="#{pro.fotoCollection}" var="fto">
+                                        <div class="col-md-4 col-sm-6">
+                                            <div class="project-item">
+                                                <h:graphicImage   value="/imagesProducto/#{fto.fotRuta}"  ></h:graphicImage>
+                                                <div class="project-hover">
+                                                    <div class="inside">
+                                                        <h5><a href="#"> #{pro.proNombre}</a></h5>
+                                                        <p> #{pro.proDescripcion} </p>
+                                                        <p> $ #{pro.proValor} </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </c:forEach>
+                                </c:forEach>
+
+
+
+
+                            </div> <!-- .projects-holder -->
+                        </div>
+                        <hr/>
+
+                    </c:forEach>
+
+
+
+
+                    <div class="row" id="footer">
+                        <div class="col-md-12 text-center">
+                            <p class="copyright-text">Copyright &copy; 2015 Company Name</p>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+        <script src="sales/js/vendor/jquery-1.10.2.min.js"></script>
+        <script src="sales/js/min/plugins.min.js"></script>
+        <script src="sales/js/min/main.min.js"></script>
+
+    </h:body>
+</html>
+

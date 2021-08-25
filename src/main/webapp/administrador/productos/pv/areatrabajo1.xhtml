@@ -8,7 +8,7 @@
       xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
       xmlns:p="http://primefaces.org/ui">
     <ui:composition>
-    
+
 
         <div class="row">
             <div class="col-xl-12">
@@ -16,93 +16,80 @@
                     <div class="card-header border-0">
                         <div class="row align-items-center">
                             <div class="col">
-                                <h3 class="mb-0">Usuarios</h3>
+                                <h3 class="mb-0">Productos</h3>
                             </div>
                             <div class="col text-right">
                                 <a href="#!" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#exampleModalNuevo">Nuevo</a>
-                                <a href="#!" onclick="$('#frspinner\\:btnsp').click()" class="btn btn-sm btn-danger"  > Reset Claves</a>
-                                  <h:form id="frspinner">
-                                    <p:growl id="growl" showDetail="true" />
-                                    <p:commandButton style="display: none" id="btnsp" onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()" actionListener="#{usuarioSession.resetClaveTodosUsuarios}" update="growl" value="Reset Claves" class="btn btn-sm btn-warning"  />
-                                </h:form>
-
-
-                                <p:dialog widgetVar="statusDialog" modal="true" draggable="false" closable="false" resizable="false" showHeader="false">
-                                    <div class="p-text-center">
-                                        <img src="#{request.contextPath}/assets/img/brand/Spin-1s-200px.gif" alt=""/>
-                                    </div>
-                                </p:dialog>
-
                             </div>
                         </div>
                     </div>  
                     <h:form id="datosTabla">
-                        <p:growl id="growl" showDetail="true" />
                         <div class="table-responsive">
                             <!-- Projects table -->
                             <table class="table align-items-center table-flush">
                                 <thead class="thead-light">
                                     <tr>
-                                        <th scope="col">Tipo Documento</th>
-                                        <th scope="col">Documento</th>
-                                        <th scope="col">Nombres</th>
-                                        <th scope="col">Correo</th>
-                                        <th scope="col">Estado</th>
-                                        <th scope="col">Foto</th>
-                                        <th scope="col">Roles</th>
+                                        <th scope="col">Imagen</th>
+                                        <th scope="col">Serial</th>
+                                        <th scope="col">Nombre</th>
+                                        <th scope="col">Descripcion</th>
+                                        <th scope="col">Valor</th>
+                                        <th scope="col">Cantidad/Disponibles</th>
+                                        <th scope="col">Categoria</th>
                                         <th scope="col">Acciones</th>
-
                                     </tr>
                                 </thead>
                                 <tbody>
 
-                                    <c:forEach items="#{usuarioSession.leertodos()}" var="usu">
-                                        <c:if test="#{usuarioSession.usuLogin.usuUsuarioid != usu.usuUsuarioid}">
-                                            <tr>
-                                                <th scope="row">
-                                                    #{usu.usuTipodocumento}
-                                                </th>
-                                                <td>
-                                                    #{usu.usuNumeroducumento}
-                                                </td>
-                                                <td>
-                                                    #{usu.usuNombres}  #{usu.usuApellidos}
-                                                </td>
-                                                <td>
-                                                    #{usu.usuCorreo}  
-                                                </td>
-                                                <td>
-                                                    <img src="#{request.contextPath}/assets/img/brand/#{usu.usuEstado == 1?'ac':'inc'}.png" alt=""/>
-                                                </td>
+                                    <c:forEach items="#{productosView.todosProductos}" var="pro">
 
-                                                <td>
-                                                    <div class="media align-items-center">
-                                                        <span class="avatar avatar-sm rounded-circle">
-                                                            <h:graphicImage  value="/imagesPt/#{usu.usuFoto}"   ></h:graphicImage>
-                                                        </span>
-                                                    </div>
-                                                </td>
+                                        <tr>
+                                            <td>
+                                                <c:forEach items="#{pro.fotoCollection}" var="fto" varStatus="pos">
+                                                    <h:graphicImage   value="/imagesProducto/#{fto.fotRuta}"  height="36px" width="36px"  class="rounded-circle" ></h:graphicImage>
+                                                </c:forEach>
 
-                                                <td>
-                                                    <!-- Button trigger modal -->
-                                                    <h:commandButton action="#{usuarioSession.cargarUsuarioTemporal(usu)}" class="btn btn-primary" html5:data-toggle="modal" html5:data-target="#exampleModal" value="Ver">
-                                                        <f:ajax render=":modalRoles" ></f:ajax> 
-                                                    </h:commandButton>
-                                                </td>
+                                            </td>
+                                            <td scope="row">
+                                                #{pro.proProductoid}
+                                            </td>
+                                            <td>
+                                                #{pro.proNombre}
+                                            </td>
+                                            <td>
+                                                #{pro.proDescripcion}
+                                            </td>                                            
+                                            <td>
+                                                #{pro.proValor}
+                                            </td>
+                                            <td>
+                                                #{pro.proCantidaddisponiblel}
+                                            </td>
+                                            <td>
+                                                #{pro.fkCategoria.catNombre}
+                                            </td>
 
-                                                <td>
-                                                    <h:commandButton action="#{usuarioSession.cambiarEstado(usu)}" class="btn btn-success" value="C/E">
-                                                        <f:ajax render="datosTabla" ></f:ajax> 
-                                                    </h:commandButton>
 
-                                                    <h:commandButton action="#{usuarioSession.cargarUsuarioTemporal(usu)}" class="btn btn-danger" html5:data-toggle="modal" html5:data-target="#exampleModalActualizar" value="Act">
-                                                        <f:ajax render=":modalActualizar" ></f:ajax> 
-                                                    </h:commandButton>
+                                            <td>
+                                                <h:commandButton action="#{productosView.removerProducto(pro)}" class="btn btn-success" value="Rem">
+                                                    <f:ajax render="datosTabla" ></f:ajax> 
+                                                </h:commandButton>
 
-                                                </td>
+                                                <h:commandButton action="#{productosView.cargarCategoriaTemporal(pro)}" class="btn btn-danger" html5:data-toggle="modal" html5:data-target="#exampleModalActualizar" value="Act">
+                                                    <f:ajax render=":modalActualizar" ></f:ajax> 
+                                                </h:commandButton>
 
-                                            </tr>
-                                        </c:if>  
+
+                                                <h:commandButton action="#{productosView.cargarCategoriaTemporal(pro)}" class="btn btn-primary" html5:data-toggle="modal" html5:data-target="#exampleModalFotos" value="Fotos">
+                                                    <f:ajax render=":modalActualizarFotos :carga" ></f:ajax> 
+                                                </h:commandButton>
+
+
+
+                                            </td>
+
+                                        </tr>
+
                                     </c:forEach>
 
                                 </tbody>
@@ -117,76 +104,6 @@
 
 
 
-        <!-- Modal -->
-        <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered" role="document">
-                <div class="modal-content">
-                    <h:form id="modalRoles">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalLabel">#{usuarioSession.usuTemporal.usuNombres} #{usuarioSession.usuTemporal.usuApellidos}</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-
-                        <div class="modal-body">
-                            <div class="card">
-
-                                <div class="row">
-                                    <div class="table-responsive col-6">
-                                        <table class="table align-items-center table-flush">
-                                            <thead class="thead-light">
-                                                <tr>
-                                                    <th scope="col">Activos</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <ui:repeat value="#{usuarioSession.usuTemporal.rolCollection}" var="rolUsu">
-                                                    <tr>
-                                                        <td scope="row">
-                                                            <h:commandLink action="#{usuarioSession.removerRol(rolUsu.rolRolid)}" class="nav-link">
-                                                                <i class="ni ni-#{rolUsu.rolIcono} text-#{rolUsu.rolColor}"></i>
-                                                                <span class="nav-link-text">#{rolUsu.rolNombre}</span>
-                                                                <f:ajax render=":modalRoles"></f:ajax>   
-                                                            </h:commandLink>
-                                                        </td>
-                                                    </tr>
-                                                </ui:repeat>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                    <div class="table-responsive col-6">
-                                        <table class="table align-items-center table-flush">
-                                            <thead class="thead-light">
-                                                <tr>
-                                                    <th scope="col">Inactivos</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <ui:repeat value="#{usuarioSession.rolesSinAsignar}" var="rolSa">
-                                                    <tr>
-                                                        <td scope="row">
-                                                            <h:commandLink action="#{usuarioSession.addRol(rolSa.rolRolid)}" class="nav-link">
-                                                                <i class="ni ni-#{rolSa.rolIcono} text-#{rolSa.rolColor}"></i>
-                                                                <span class="nav-link-text">#{rolSa.rolNombre}</span>
-                                                                <f:ajax render=":modalRoles"></f:ajax>   
-                                                            </h:commandLink>
-                                                        </td>
-                                                    </tr>
-                                                </ui:repeat>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                        </div>
-                    </h:form>
-                </div>
-            </div>
-        </div>
 
 
         <!-- Modal -->
@@ -195,7 +112,7 @@
                 <div class="modal-content">
                     <h:form id="modalActualizar">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalLabel">#{usuarioSession.usuTemporal.usuNombres} #{usuarioSession.usuTemporal.usuApellidos}</h5>
+                            <h5 class="modal-title" id="exampleModalLabel">#{productosView.proTemporal.proNombre}</h5>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
@@ -203,18 +120,14 @@
 
                         <div class="modal-body">
                             <div class="card">
+
+
                                 <div class="form-group">
                                     <div class="input-group input-group-merge input-group-alternative mb-3">
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"><i class="ni ni-hat-3"></i></span>
                                         </div>
-
-                                        <h:selectOneMenu value="#{usuarioSession.usuTemporal.usuTipodocumento}" class="form-control" >
-                                            <f:selectItem itemLabel="Cedula" itemValue="Cedula"></f:selectItem>
-                                            <f:selectItem itemLabel="Cedula Ex" itemValue="Cedula Ex"></f:selectItem>
-                                            <f:selectItem itemLabel="T. Identidad" itemValue="T. Identidad"></f:selectItem>
-                                            <f:selectItem itemLabel="Otros" itemValue="Otros"></f:selectItem>
-                                        </h:selectOneMenu>   
+                                        <h:inputText value="#{productosView.proTemporal.proNombre}" class="form-control" html5:placeholder="Nombre producto" />
                                     </div>
                                 </div>
 
@@ -223,7 +136,7 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"><i class="ni ni-hat-3"></i></span>
                                         </div>
-                                        <h:inputText value="#{usuarioSession.usuTemporal.usuNumeroducumento}" class="form-control" html5:placeholder="Numero Documento" />
+                                        <h:inputText value="#{productosView.proTemporal.proDescripcion}" class="form-control" html5:placeholder="Descripcion" />
                                     </div>
                                 </div>
 
@@ -232,7 +145,17 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"><i class="ni ni-hat-3"></i></span>
                                         </div>
-                                        <h:inputText value="#{usuarioSession.usuTemporal.usuNombres}"  class="form-control" html5:placeholder="Nombres" />
+                                        <h:inputText value="#{productosView.proTemporal.proValor}" class="form-control" html5:placeholder="Valor" />
+                                    </div>
+                                </div>
+
+
+                                <div class="form-group">
+                                    <div class="input-group input-group-merge input-group-alternative mb-3">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text"><i class="ni ni-hat-3"></i></span>
+                                        </div>
+                                        <h:inputText value="#{productosView.proTemporal.proCantidaddisponiblel}" class="form-control" html5:placeholder="Cantidad Disponibles" />
                                     </div>
                                 </div>
 
@@ -241,32 +164,16 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"><i class="ni ni-hat-3"></i></span>
                                         </div>
-                                        <h:inputText value="#{usuarioSession.usuTemporal.usuApellidos}"  class="form-control" html5:placeholder="Apellidos" />
+                                        <h:selectOneMenu value="#{productosView.fk_categoria}" class="form-control">
+                                            <f:selectItems itemLabel="#{cat.catNombre}" itemValue="#{cat.catCategoriaid}" var="cat" value="#{productosView.listaCategorias}"></f:selectItems>
+                                        </h:selectOneMenu>
+
                                     </div>
                                 </div>
-
-
-                                <div class="form-group">
-                                    <div class="input-group input-group-merge input-group-alternative mb-3">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text"><i class="ni ni-email-83"></i></span>
-                                        </div>
-                                        <h:inputText value="#{usuarioSession.usuTemporal.usuCorreo}"  class="form-control" html5:placeholder="Correo" />
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <div class="input-group input-group-merge input-group-alternative">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text"><i class="ni ni-lock-circle-open"></i></span>
-                                        </div>
-                                        <h:inputSecret value="#{usuarioSession.usuTemporal.usuClave}"  class="form-control"/>
-                                    </div>
-                                </div>
-
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <h:commandButton action="#{usuarioSession.actualizarTempDatos()}" class="btn btn-primary" value="Actualizar" />
+                            <h:commandButton action="#{productosView.actualizarTempDatos()}" class="btn btn-primary" value="Actualizar" />
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                         </div>
                     </h:form>
@@ -281,7 +188,7 @@
                 <div class="modal-content">
                     <h:form id="modalNuevo">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalLabel">Nuevo usuario</h5>
+                            <h5 class="modal-title" id="exampleModalLabel">Nueva producto</h5>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
@@ -294,13 +201,7 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"><i class="ni ni-hat-3"></i></span>
                                         </div>
-
-                                        <h:selectOneMenu value="#{usuarioSession.usuReg.usuTipodocumento}" class="form-control" >
-                                            <f:selectItem itemLabel="Cedula" itemValue="Cedula"></f:selectItem>
-                                            <f:selectItem itemLabel="Cedula Ex" itemValue="Cedula Ex"></f:selectItem>
-                                            <f:selectItem itemLabel="T. Identidad" itemValue="T. Identidad"></f:selectItem>
-                                            <f:selectItem itemLabel="Otros" itemValue="Otros"></f:selectItem>
-                                        </h:selectOneMenu>   
+                                        <h:inputText value="#{productosView.proNueva.proNombre}" class="form-control" html5:placeholder="Nombre producto" />
                                     </div>
                                 </div>
 
@@ -309,7 +210,7 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"><i class="ni ni-hat-3"></i></span>
                                         </div>
-                                        <h:inputText value="#{usuarioSession.usuReg.usuNumeroducumento}" class="form-control" html5:placeholder="Numero Documento" />
+                                        <h:inputText value="#{productosView.proNueva.proDescripcion}" class="form-control" html5:placeholder="Descripcion" />
                                     </div>
                                 </div>
 
@@ -318,7 +219,17 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"><i class="ni ni-hat-3"></i></span>
                                         </div>
-                                        <h:inputText value="#{usuarioSession.usuReg.usuNombres}"  class="form-control" html5:placeholder="Nombres" />
+                                        <h:inputText value="#{productosView.proNueva.proValor}" class="form-control" html5:placeholder="Valor" />
+                                    </div>
+                                </div>
+
+
+                                <div class="form-group">
+                                    <div class="input-group input-group-merge input-group-alternative mb-3">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text"><i class="ni ni-hat-3"></i></span>
+                                        </div>
+                                        <h:inputText value="#{productosView.proNueva.proCantidaddisponiblel}" class="form-control" html5:placeholder="Cantidad Disponibles" />
                                     </div>
                                 </div>
 
@@ -327,38 +238,102 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"><i class="ni ni-hat-3"></i></span>
                                         </div>
-                                        <h:inputText value="#{usuarioSession.usuReg.usuApellidos}"  class="form-control" html5:placeholder="Apellidos" />
+                                        <h:selectOneMenu value="#{productosView.fk_categoria}" class="form-control">
+                                            <f:selectItems itemLabel="#{cat.catNombre}" itemValue="#{cat.catCategoriaid}" var="cat" value="#{productosView.listaCategorias}"></f:selectItems>
+                                        </h:selectOneMenu>
+
                                     </div>
                                 </div>
 
-
-                                <div class="form-group">
-                                    <div class="input-group input-group-merge input-group-alternative mb-3">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text"><i class="ni ni-email-83"></i></span>
-                                        </div>
-                                        <h:inputText value="#{usuarioSession.usuReg.usuCorreo}"  class="form-control" html5:placeholder="Correo" />
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <div class="input-group input-group-merge input-group-alternative">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text"><i class="ni ni-lock-circle-open"></i></span>
-                                        </div>
-                                        <h:inputSecret value="#{usuarioSession.usuReg.usuClave}"  class="form-control"/>
-                                    </div>
-                                </div>
 
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <h:commandButton action="#{usuarioSession.registrarUsuario()}" class="btn btn-primary" value="Registrar" />
+                            <h:commandButton action="#{productosView.registroProducto()}" class="btn btn-primary" value="Registrar" />
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                         </div>
                     </h:form>
                 </div>
             </div>
         </div>
+
+
+
+
+        <!-- Modal -->
+        <div class="modal fade" id="exampleModalFotos" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <h:form id="modalActualizarFotos">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">#{productosView.proTemporal.proNombre} Fotos : #{productosView.proTemporal.fotoCollection.size()} </h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+
+                        <div class="modal-body">
+                            <div id="carouselExampleCaptions" class="carousel slide" data-ride="carousel">
+                                <ol class="carousel-indicators">
+                                    <c:forEach items="#{productosView.proTemporal.fotoCollection}" var="fto" varStatus="pos">
+                                        <li data-target="#carouselExampleCaptions" data-slide-to="#{pos.index}" class="#{pos.index == 0 ?'active':''}"></li>
+                                    </c:forEach>
+                                </ol>
+                                <div class="carousel-inner">
+
+                                    <c:forEach items="#{productosView.proTemporal.fotoCollection}" var="fto" varStatus="pos">
+                                        <div class="carousel-item #{pos.index == 0 ?'active':''}">
+                                            <h:graphicImage   value="/imagesProducto/#{fto.fotRuta}"  class="d-block w-100" ></h:graphicImage>
+                                            <div class="carousel-caption d-none d-md-block">
+                                                <h5>Categoria : #{productosView.proTemporal.fkCategoria.catNombre}</h5>
+                                                <p>#{productosView.proTemporal.fkCategoria.catDescripcion}</p>
+                                            </div>
+                                        </div>
+
+                                    </c:forEach>
+
+
+                                </div>
+                                <a class="carousel-control-prev" href="#carouselExampleCaptions" role="button" data-slide="prev">
+                                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                    <span class="sr-only">Previous</span>
+                                </a>
+                                <a class="carousel-control-next" href="#carouselExampleCaptions" role="button" data-slide="next">
+                                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                    <span class="sr-only">Next</span>
+                                </a>
+                            </div>
+                        </div>
+                    </h:form>
+                    <div class="modal-footer">
+                        <h:form id="carga" enctype="multipart/form-data" role="form">
+
+                            <c:forEach items="#{productosView.proTemporal.fotoCollection}" var="fto" varStatus="pos">
+                                <h:commandButton  class="btn btn-danger"  action="#{productosView.removerFotoProducto(fto.fotFotoid)}" value="#{pos.index + 1}">
+                                    <f:ajax render=":modalActualizarFotos :carga"></f:ajax>    
+                                </h:commandButton>
+                            </c:forEach>
+
+
+                            <h:inputFile value="#{productosView.archivoCarga}" onchange="$('#carga\\:btnCarga').click()" style="display: none" id="fotop"  ></h:inputFile>
+                            <h:commandButton style="display: none" id="btnCarga" action="#{productosView.cargarFotoProducto}" value="enviar">
+                                <f:ajax event="click" render=":modalActualizarFotos" execute="carga:fotop"></f:ajax>    
+                            </h:commandButton>
+                            <button id="resetFromImg" style="display: none" class="btn btn-icon btn-info" type="reset"></button>
+
+                            <button onclick="$('#carga\\:fotop').click()" class="btn btn-icon btn-info" type="button">
+                                <span class="btn-inner--icon"><i class="ni ni-satisfied"></i></span>
+                                <span class="btn-inner--text">Cargar foto</span>
+                            </button>
+                        </h:form>
+
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
 
     </ui:composition>
 </html>

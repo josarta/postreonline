@@ -39,12 +39,14 @@ public class CategoriaView implements Serializable {
 
     @PostConstruct
     public void cargaInicial() {
+        todasCategorias.clear();
         todasCategorias.addAll(categoriaFacadeLocal.leertodos());
     }
 
     public void actualizarTempDatos() {
         try {
             categoriaFacadeLocal.edit(catTemporal);
+            todasCategorias.clear();
             todasCategorias.addAll(categoriaFacadeLocal.leertodos());
             PrimeFaces.current().executeScript("Swal.fire({"
                     + "  title: 'Categoria',"
@@ -71,6 +73,7 @@ public class CategoriaView implements Serializable {
                         + "  icon: 'success',"
                         + "  confirmButtonText: 'OK'"
                         + "})");
+                todasCategorias.clear();
                 todasCategorias.addAll(categoriaFacadeLocal.leertodos());
             } else {
 
@@ -89,6 +92,7 @@ public class CategoriaView implements Serializable {
                     + "  confirmButtonText: 'Intente mas tarde !!!'"
                     + "})");
         }
+        catNueva = new Categoria();
     }
 
     public void cargarCategoriaTemporal(Categoria cat) {
@@ -98,6 +102,7 @@ public class CategoriaView implements Serializable {
     public void removerCategoria(Categoria cat) {
         try {
             categoriaFacadeLocal.remove(cat);
+            todasCategorias.clear();
             todasCategorias.addAll(categoriaFacadeLocal.leertodos());
             PrimeFaces.current().executeScript("Swal.fire({"
                     + "  title: 'Categoria',"

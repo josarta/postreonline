@@ -27,7 +27,7 @@
         </session-timeout>
     </session-config>
     <welcome-file-list>
-        <welcome-file>index.xhtml</welcome-file>
+        <welcome-file>sales.xhtml</welcome-file>
     </welcome-file-list>
     <data-source>
         <name>java:app/dbs_ventas</name>
