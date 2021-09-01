@@ -35,5 +35,7 @@ public interface CategoriaFacadeLocal {
     public List<Categoria> leertodos();
 
     public Categoria buscarPorId(int catId);
+
+    public Categoria validarSiExiste(String catNom);
     
 }

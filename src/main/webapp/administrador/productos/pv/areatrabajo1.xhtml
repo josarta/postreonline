@@ -18,12 +18,22 @@
                             <div class="col">
                                 <h3 class="mb-0">Productos</h3>
                             </div>
+
+                            <h:form id="cargaArchivo" enctype="multipart/form-data" >
+                                <h:inputFile value="#{productosView.archivoCarga}" style="display: none" id="archivo"  >
+                                    <f:ajax render="datosTabla" listener="#{productosView.cargarInicialDatos}" ></f:ajax> 
+                                </h:inputFile>
+                                <button id="resetFromImg" style="display: none" class="btn btn-icon btn-info" type="reset"></button>
+                            </h:form>
+
                             <div class="col text-right">
                                 <a href="#!" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#exampleModalNuevo">Nuevo</a>
+                                <a href="#!" class="btn btn-sm btn-primary"  onclick="$('#cargaArchivo\\:archivo').click()" >.csv</a>
                             </div>
                         </div>
                     </div>  
-                    <h:form id="datosTabla">
+
+                    <h:panelGroup id="datosTabla">
                         <div class="table-responsive">
                             <!-- Projects table -->
                             <table class="table align-items-center table-flush">
@@ -40,62 +50,62 @@
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    <h:form >
+                                        <c:forEach items="#{productosView.todosProductos}" var="pro">
 
-                                    <c:forEach items="#{productosView.todosProductos}" var="pro">
+                                            <tr>
+                                                <td>
+                                                    <c:forEach items="#{pro.fotoCollection}" var="fto" varStatus="pos">
+                                                        <h:graphicImage   value="/imagesProducto/#{fto.fotRuta}"  height="36px" width="36px"  class="rounded-circle" ></h:graphicImage>
+                                                    </c:forEach>
 
-                                        <tr>
-                                            <td>
-                                                <c:forEach items="#{pro.fotoCollection}" var="fto" varStatus="pos">
-                                                    <h:graphicImage   value="/imagesProducto/#{fto.fotRuta}"  height="36px" width="36px"  class="rounded-circle" ></h:graphicImage>
-                                                </c:forEach>
-
-                                            </td>
-                                            <td scope="row">
-                                                #{pro.proProductoid}
-                                            </td>
-                                            <td>
-                                                #{pro.proNombre}
-                                            </td>
-                                            <td>
-                                                #{pro.proDescripcion}
-                                            </td>                                            
-                                            <td>
-                                                #{pro.proValor}
-                                            </td>
-                                            <td>
-                                                #{pro.proCantidaddisponiblel}
-                                            </td>
-                                            <td>
-                                                #{pro.fkCategoria.catNombre}
-                                            </td>
-
-
-                                            <td>
-                                                <h:commandButton action="#{productosView.removerProducto(pro)}" class="btn btn-success" value="Rem">
-                                                    <f:ajax render="datosTabla" ></f:ajax> 
-                                                </h:commandButton>
-
-                                                <h:commandButton action="#{productosView.cargarCategoriaTemporal(pro)}" class="btn btn-danger" html5:data-toggle="modal" html5:data-target="#exampleModalActualizar" value="Act">
-                                                    <f:ajax render=":modalActualizar" ></f:ajax> 
-                                                </h:commandButton>
+                                                </td>
+                                                <td scope="row">
+                                                    #{pro.proProductoid}
+                                                </td>
+                                                <td>
+                                                    #{pro.proNombre}
+                                                </td>
+                                                <td>
+                                                    #{pro.proDescripcion}
+                                                </td>                                            
+                                                <td>
+                                                    #{pro.proValor}
+                                                </td>
+                                                <td>
+                                                    #{pro.proCantidaddisponiblel}
+                                                </td>
+                                                <td>
+                                                    #{pro.fkCategoria.catNombre}
+                                                </td>
 
 
-                                                <h:commandButton action="#{productosView.cargarCategoriaTemporal(pro)}" class="btn btn-primary" html5:data-toggle="modal" html5:data-target="#exampleModalFotos" value="Fotos">
-                                                    <f:ajax render=":modalActualizarFotos :carga" ></f:ajax> 
-                                                </h:commandButton>
+                                                <td>
+                                                    <h:commandButton action="#{productosView.removerProducto(pro)}" class="btn btn-success" value="Rem">
+                                                        <f:ajax render="datosTabla" ></f:ajax> 
+                                                    </h:commandButton>
+
+                                                    <h:commandButton action="#{productosView.cargarCategoriaTemporal(pro)}" class="btn btn-danger" html5:data-toggle="modal" html5:data-target="#exampleModalActualizar" value="Act">
+                                                        <f:ajax render=":modalActualizar" ></f:ajax> 
+                                                    </h:commandButton>
+
+
+                                                    <h:commandButton action="#{productosView.cargarCategoriaTemporal(pro)}" class="btn btn-primary" html5:data-toggle="modal" html5:data-target="#exampleModalFotos" value="Fotos">
+                                                        <f:ajax render=":modalActualizarFotos :carga" ></f:ajax> 
+                                                    </h:commandButton>
 
 
 
-                                            </td>
+                                                </td>
 
-                                        </tr>
+                                            </tr>
 
-                                    </c:forEach>
-
+                                        </c:forEach>
+                                    </h:form>
                                 </tbody>
                             </table>
                         </div> 
-                    </h:form>
+                    </h:panelGroup>
                 </div>
             </div>
 

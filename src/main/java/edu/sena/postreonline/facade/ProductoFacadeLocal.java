@@ -39,5 +39,9 @@ public interface ProductoFacadeLocal {
     public boolean removerFoto(int fk_producto, int fk_foto);
 
     public boolean adicionarFoto(int fk_producto, int fk_foto);
+
+    public Producto validarSiExiste(String proNom);
+
+    public boolean actualizaProducto(Producto prodReg, int fk_categoria);
     
 }

@@ -5,6 +5,10 @@
  */
 package edu.sena.postreonline.controladores;
 
+import com.opencsv.CSVParser;
+import com.opencsv.CSVParserBuilder;
+import com.opencsv.CSVReader;
+import com.opencsv.CSVReaderBuilder;
 import com.sun.org.apache.bcel.internal.generic.AALOAD;
 import edu.sena.postreonline.entity.Categoria;
 import edu.sena.postreonline.entity.Foto;
@@ -13,6 +17,7 @@ import edu.sena.postreonline.facade.CategoriaFacadeLocal;
 import edu.sena.postreonline.facade.FotoFacadeLocal;
 import edu.sena.postreonline.facade.ProductoFacadeLocal;
 import java.io.File;
+import java.io.FileReader;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.nio.file.Files;
@@ -63,6 +68,90 @@ public class ProductosView implements Serializable {
         todosProductos.clear();
         todosProductos.addAll(productoFacadeLocal.leertodos());
         listaCategorias.addAll(categoriaFacadeLocal.leertodos());
+    }
+
+    public void cargarInicialDatos() {
+        if (archivoCarga != null) {
+            if (archivoCarga.getSize() > 700000) {
+                PrimeFaces.current().executeScript("Swal.fire({"
+                        + "  title: 'Error!',"
+                        + "  text: 'El archivo excede el tamaño permitido',"
+                        + "  icon: 'error',"
+                        + "  confirmButtonText: 'Cambie de archivo !!!'"
+                        + "})");
+            } else if (archivoCarga.getContentType().equalsIgnoreCase("application/vnd.ms-excel")) {
+                File carpeta = new File("C:/imgpostres/Administrador/Archivos");
+                if (!carpeta.exists()) {
+                    carpeta.mkdirs();
+                } else {
+                    try (InputStream is = archivoCarga.getInputStream()) {
+                        Files.copy(is, (new File(carpeta, archivoCarga.getSubmittedFileName())).toPath(), StandardCopyOption.REPLACE_EXISTING);
+                        CSVParser conPuntoYComa = new CSVParserBuilder().withSeparator(';').build();
+                        CSVReader reader = new CSVReaderBuilder(new FileReader("C:/imgpostres/Administrador/Archivos/" + archivoCarga.getSubmittedFileName())).withCSVParser(conPuntoYComa).build();;
+                        String[] nextLine;
+                        while ((nextLine = reader.readNext()) != null) {
+                            // nombre : nextLine[0]
+                            // descripcion : nextLine[1]
+                            // valor : nextLine[2]
+                            // cantidad : nextLine[3]
+                            // f_categoria : nextLine[4]
+
+                            Producto tempPro = productoFacadeLocal.validarSiExiste(nextLine[0]);
+
+                            if (tempPro != null) {
+                                tempPro.setProDescripcion(nextLine[1]);
+                                tempPro.setProValor(Double.parseDouble(nextLine[2]));
+                                tempPro.setProCantidaddisponiblel(Integer.parseInt(nextLine[3]));
+                                productoFacadeLocal.actualizaProducto(tempPro,Integer.parseInt(nextLine[4]));
+                            } else {
+                                Producto proNew = new Producto();
+                                proNew.setProNombre(nextLine[0]);
+                                proNew.setProDescripcion(nextLine[1]);
+                                proNew.setProValor(Double.parseDouble(nextLine[2]));
+                                proNew.setProCantidaddisponiblel(Integer.parseInt(nextLine[3]));
+                                productoFacadeLocal.registroProducto(proNew, Integer.parseInt(nextLine[4]));
+                            }
+
+                        }
+
+                        todosProductos.clear();
+                        todosProductos.addAll(productoFacadeLocal.leertodos());
+
+                        PrimeFaces.current().executeScript("Swal.fire({"
+                                + "  title: 'Productos',"
+                                + "  text: 'Cargados correctamente',"
+                                + "  icon: 'success',"
+                                + "  confirmButtonText: 'OK'"
+                                + "})");
+                        
+                        reader.close();
+
+                    } catch (Exception e) {
+                        PrimeFaces.current().executeScript("Swal.fire({"
+                                + "  title: 'Error!',"
+                                + "  text: 'No se pudo realizar esta accion',"
+                                + "  icon: 'error',"
+                                + "  confirmButtonText: 'Intente mas tarde !!!'"
+                                + "})");
+                    }
+                }
+            } else {
+                PrimeFaces.current().executeScript("Swal.fire({"
+                        + "  title: 'Error!',"
+                        + "  text: 'El archivo ingresado no es un archivo.csv',"
+                        + "  icon: 'error',"
+                        + "  confirmButtonText: 'Cambie de archivo !!!'"
+                        + "})");
+            }
+        } else {
+            PrimeFaces.current().executeScript("Swal.fire({"
+                    + "  title: 'Error!',"
+                    + "  text: 'No se pudo realizar esta accion',"
+                    + "  icon: 'error',"
+                    + "  confirmButtonText: 'Intente mas tarde !!!'"
+                    + "})");
+        }
+        PrimeFaces.current().executeScript("document.getElementById('resetFromImg').click();");
     }
 
     public void cargarCategoriaTemporal(Producto pro) {

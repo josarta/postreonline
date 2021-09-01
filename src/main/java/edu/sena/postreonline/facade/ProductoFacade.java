@@ -46,6 +46,27 @@ public class ProductoFacade extends AbstractFacade<Producto> implements Producto
             return false;
         }
     }
+    
+    
+    
+    
+     @Override
+    public boolean actualizaProducto(Producto prodReg, int fk_categoria) {
+        try {
+            Query q = em.createNativeQuery("UPDATE tbl_producto SET pro_nombre = ?, pro_descripcion = ?, pro_valor = ?, pro_cantidaddisponiblel = ?, fk_categoria = ? WHERE (pro_productoid = ?)");
+            q.setParameter(1, prodReg.getProNombre());
+            q.setParameter(2, prodReg.getProDescripcion());
+            q.setParameter(3, prodReg.getProValor());
+            q.setParameter(4, prodReg.getProCantidaddisponiblel());
+            q.setParameter(5, fk_categoria);
+            q.setParameter(6, prodReg.getProProductoid());            
+            q.executeUpdate();
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+    
 
     @Override
     public List<Producto> leertodos() {
@@ -88,6 +109,20 @@ public class ProductoFacade extends AbstractFacade<Producto> implements Producto
         } catch (Exception e) {
             return false;
         }
+    }
+    
+    
+    @Override
+    public Producto validarSiExiste(String proNom) {
+        try {
+            em.getEntityManagerFactory().getCache().evictAll();
+            Query q = em.createQuery("SELECT c FROM Producto c WHERE c.proNombre LIKE CONCAT('%',:proNom,'%')");
+            q.setParameter("proNom", proNom);
+            return (Producto) q.getSingleResult();
+        } catch (Exception e) {
+            return null;
+        }
+
     }
 
 }
