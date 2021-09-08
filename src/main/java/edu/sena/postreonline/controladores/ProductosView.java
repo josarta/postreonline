@@ -9,7 +9,6 @@ import com.opencsv.CSVParser;
 import com.opencsv.CSVParserBuilder;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVReaderBuilder;
-import com.sun.org.apache.bcel.internal.generic.AALOAD;
 import edu.sena.postreonline.entity.Categoria;
 import edu.sena.postreonline.entity.Foto;
 import edu.sena.postreonline.entity.Producto;
@@ -18,19 +17,33 @@ import edu.sena.postreonline.facade.FotoFacadeLocal;
 import edu.sena.postreonline.facade.ProductoFacadeLocal;
 import java.io.File;
 import java.io.FileReader;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.Serializable;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 import javax.ejb.EJB;
+import javax.faces.context.ExternalContext;
+import javax.faces.context.FacesContext;
 import javax.inject.Named;
 import javax.faces.view.ViewScoped;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
+import javax.sql.DataSource;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperExportManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
 import org.primefaces.PrimeFaces;
 import org.primefaces.shaded.commons.io.FilenameUtils;
 
@@ -48,6 +61,8 @@ public class ProductosView implements Serializable {
     CategoriaFacadeLocal categoriaFacadeLocal;
     @EJB
     FotoFacadeLocal fotoFacadeLocal;
+    @Resource(lookup = "java:app/dbs_ventas")
+    DataSource dataSource;
 
     private Producto proNueva = new Producto();
     private Producto proTemporal = new Producto();
@@ -68,6 +83,27 @@ public class ProductosView implements Serializable {
         todosProductos.clear();
         todosProductos.addAll(productoFacadeLocal.leertodos());
         listaCategorias.addAll(categoriaFacadeLocal.leertodos());
+    }
+
+    public void descargaArchivoPdf() {
+        FacesContext facesContext = FacesContext.getCurrentInstance();
+        ExternalContext context = facesContext.getExternalContext();
+        HttpServletResponse response = (HttpServletResponse) context.getResponse();
+        try {
+            File jasper = new File(context.getRealPath("/reportes/rusuarios.jasper"));
+            JasperPrint jp = JasperFillManager.fillReport(jasper.getPath(), new HashMap(), dataSource.getConnection());
+            
+            OutputStream os = response.getOutputStream();
+            JasperExportManager.exportReportToPdfStream(jp, os);
+            response.setContentType("application/pdf");
+            response.addHeader("Content-disposition", "attachment; filename=Lista usuarios.pdf");
+            os.flush();
+            os.close();
+            facesContext.responseComplete();           
+
+        } catch (IOException | SQLException | JRException e) {
+            System.out.println("ProductosView.descargaArchivoPdf() " + e.getMessage());
+        }
     }
 
     public void cargarInicialDatos() {
@@ -102,7 +138,7 @@ public class ProductosView implements Serializable {
                                 tempPro.setProDescripcion(nextLine[1]);
                                 tempPro.setProValor(Double.parseDouble(nextLine[2]));
                                 tempPro.setProCantidaddisponiblel(Integer.parseInt(nextLine[3]));
-                                productoFacadeLocal.actualizaProducto(tempPro,Integer.parseInt(nextLine[4]));
+                                productoFacadeLocal.actualizaProducto(tempPro, Integer.parseInt(nextLine[4]));
                             } else {
                                 Producto proNew = new Producto();
                                 proNew.setProNombre(nextLine[0]);
@@ -123,7 +159,7 @@ public class ProductosView implements Serializable {
                                 + "  icon: 'success',"
                                 + "  confirmButtonText: 'OK'"
                                 + "})");
-                        
+
                         reader.close();
 
                     } catch (Exception e) {

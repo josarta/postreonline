@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="57f90e44-3acd-43c2-8a69-68bd64318053">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="documento" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="nombres" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="dia" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="mes" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="annio" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT usu_tipodocumento as 'Tipo Documento' , usu_numeroducumento as 'Documento', usu_nombres as 'Nombres', usu_apellidos as 'Apellidos', usu_correo as 'Correo' FROM tbl_usuario WHERE usu_numeroducumento = $P{documento}]]>
+	</queryString>
+	<field name="Tipo Documento" class="java.lang.String"/>
+	<field name="Documento" class="java.lang.Long"/>
+	<field name="Nombres" class="java.lang.String"/>
+	<field name="Apellidos" class="java.lang.String"/>
+	<field name="Correo" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<detail>
+		<band height="555" splitType="Stretch">
+			<image>
+				<reportElement x="11" y="0" width="836" height="545" uuid="5b95057f-3e77-43c5-bc7e-12f0a1dccdcd"/>
+				<imageExpression><![CDATA["C:\\Users\\Josarta\\Documents\\NetBeansProjects\\postreonline\\src\\main\\webapp\\reportes\\Certificado-Infantil.jpg"]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement x="420" y="208" width="180" height="33" uuid="a0e66b34-1aad-4a45-9e22-04fe8e11f76f"/>
+				<textElement>
+					<font fontName="Century Gothic" size="24"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{Apellidos}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="240" y="208" width="165" height="33" uuid="ff981525-1883-4f69-a3e0-235de4e2eec4"/>
+				<textElement>
+					<font fontName="Century Gothic" size="24"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{Nombres}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="433" y="348" width="23" height="20" uuid="1eed4439-e24e-4d4d-ac86-5593c2ee89f0"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{dia}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="476" y="347" width="64" height="20" uuid="c8e5d230-1984-4576-8788-699e9645d4a4"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{mes}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

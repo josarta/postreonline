@@ -13,21 +13,39 @@ import edu.sena.postreonline.utilidades.Mail;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
+import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
+import javax.sql.DataSource;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperExportManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.export.ooxml.JRDocxExporter;
+import net.sf.jasperreports.engine.export.ooxml.JRXlsxExporter;
+import net.sf.jasperreports.export.SimpleDocxExporterConfiguration;
+import net.sf.jasperreports.export.SimpleExporterInput;
+import net.sf.jasperreports.export.SimpleOutputStreamExporterOutput;
+import net.sf.jasperreports.export.SimpleXlsxReportConfiguration;
 import org.primefaces.PrimeFaces;
 import org.primefaces.shaded.commons.io.FilenameUtils;
 
@@ -44,6 +62,9 @@ public class UsuarioSession implements Serializable {
 
     @EJB
     RolFacadeLocal rolFacadeLocal;
+
+    @Resource(lookup = "java:app/dbs_ventas")
+    DataSource dataSource;
 
     private Part archivoFoto;
 
@@ -67,6 +88,158 @@ public class UsuarioSession implements Serializable {
     @PostConstruct
     public void cargaInicial() {
         todosLosRoles.addAll(rolFacadeLocal.findAll());
+    }
+
+    public void descargaArchivoPdf() {
+        FacesContext facesContext = FacesContext.getCurrentInstance();
+        ExternalContext context = facesContext.getExternalContext();
+        HttpServletResponse response = (HttpServletResponse) context.getResponse();
+        response.setContentType("application/pdf");
+        response.addHeader("Content-disposition", "attachment; filename=Lista usuarios.pdf");
+        try {
+            File jasper = new File(context.getRealPath("/reportes/rusuarios.jasper"));
+            JasperPrint jp = JasperFillManager.fillReport(jasper.getPath(), new HashMap(), dataSource.getConnection());
+
+            OutputStream os = response.getOutputStream();
+            JasperExportManager.exportReportToPdfStream(jp, os);
+            os.flush();
+            os.close();
+            facesContext.responseComplete();
+
+        } catch (IOException | SQLException | JRException e) {
+            System.out.println("ProductosView.descargaArchivoPdf() " + e.getMessage());
+        }
+    }
+
+    public void descargaArchivoPdfCertificado(String cedula) {
+        FacesContext facesContext = FacesContext.getCurrentInstance();
+        ExternalContext context = facesContext.getExternalContext();
+        HttpServletResponse response = (HttpServletResponse) context.getResponse();
+        response.setContentType("application/pdf");
+        response.addHeader("Content-disposition", "attachment; filename=certificado.pdf");
+        try {
+            Calendar hoy = Calendar.getInstance();
+            
+            
+            Map parametros = new HashMap();
+            parametros.put("documento", cedula);
+            parametros.put("nombres", "");
+            parametros.put("dia", ""+(hoy.get(Calendar.DATE)< 10?"0"+hoy.get(Calendar.DATE):hoy.get(Calendar.DATE)));
+            String mes = "";
+            
+            switch (hoy.get(Calendar.MONTH)){
+                case 0:
+                    mes = "Enero";
+                break;
+                
+                case 1:
+                    mes = "Febrero";
+                break;
+                case 2:
+                    mes = "Marzo";
+                break;
+                case 3:
+                    mes = "Abril";
+                break;
+                case 4:
+                    mes = "Mayo";
+                break;
+                case 5:
+                    mes = "Junio";
+                break;
+                case 6:
+                    mes = "Julio";
+                break;
+                case 7:
+                    mes = "Agosto";
+                break;
+                case 8:
+                    mes = "Septiembre";
+                break;
+                case 9:
+                    mes = "Octubre";
+                break;
+                
+                case 10:
+                    mes = "Noviembre";
+                break;
+                
+                case 11:
+                    mes = "Diciembre";
+                break;
+               
+            }           
+            parametros.put("mes", mes);
+            parametros.put("annio", ""+hoy.get(Calendar.YEAR));
+            
+            
+            File jasper = new File(context.getRealPath("/reportes/certificado.jasper"));
+            JasperPrint jp = JasperFillManager.fillReport(jasper.getPath(), parametros, dataSource.getConnection());
+
+            OutputStream os = response.getOutputStream();
+            JasperExportManager.exportReportToPdfStream(jp, os);
+            os.flush();
+            os.close();
+            facesContext.responseComplete();
+
+        } catch (IOException | SQLException | JRException e) {
+            System.out.println("ProductosView.descargaArchivoPdf() " + e.getMessage());
+        }
+    }
+
+    public void descargaArchivoXlsx() {
+        FacesContext facesContext = FacesContext.getCurrentInstance();
+        ExternalContext context = facesContext.getExternalContext();
+        HttpServletResponse response = (HttpServletResponse) context.getResponse();
+        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        response.addHeader("Content-disposition", "attachment; filename=Lista usuarios.xlsx");
+        try {
+            File jasper = new File(context.getRealPath("/reportes/rusuarios.jasper"));
+            JasperPrint jp = JasperFillManager.fillReport(jasper.getPath(), new HashMap(), dataSource.getConnection());
+
+            JRXlsxExporter exporter = new JRXlsxExporter(); // initialize exporter 
+            exporter.setExporterInput(new SimpleExporterInput(jp)); // set compiled report as input
+            exporter.setExporterOutput(new SimpleOutputStreamExporterOutput(response.getOutputStream()));
+
+            SimpleXlsxReportConfiguration configuration = new SimpleXlsxReportConfiguration();
+            configuration.setOnePagePerSheet(true); // setup configuration
+            configuration.setDetectCellType(true);
+            configuration.setSheetNames(new String[]{"Usuarios"});
+            exporter.setConfiguration(configuration); // set configuration    
+            exporter.exportReport();
+            facesContext.responseComplete();
+
+        } catch (IOException | SQLException | JRException e) {
+            System.out.println("ProductosView.descargaArchivoPdf() " + e.getMessage());
+        }
+    }
+
+    public void descargaArchivoDocx() {
+        FacesContext facesContext = FacesContext.getCurrentInstance();
+        ExternalContext context = facesContext.getExternalContext();
+        HttpServletResponse response = (HttpServletResponse) context.getResponse();
+        response.setContentType("application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+        response.addHeader("Content-disposition", "attachment; filename=Lista usuarios.doc");
+        try {
+            File jasper = new File(context.getRealPath("/reportes/rusuarios.jasper"));
+            JasperPrint jp = JasperFillManager.fillReport(jasper.getPath(), new HashMap(), dataSource.getConnection());
+
+            JRDocxExporter exporter = new JRDocxExporter(); // initialize exporter 
+            exporter.setExporterInput(new SimpleExporterInput(jp)); // set compiled report as input
+            exporter.setExporterOutput(new SimpleOutputStreamExporterOutput(response.getOutputStream()));
+
+            SimpleDocxExporterConfiguration configuration = new SimpleDocxExporterConfiguration();
+            configuration.setMetadataAuthor("Jose Luis Sarta A."); // setup configuration
+            configuration.setMetadataTitle("Reporte de usuarios");
+            configuration.setMetadataSubject("Listado de usuarios");
+
+            exporter.setConfiguration(configuration); // set configuration    
+            exporter.exportReport();
+            facesContext.responseComplete();
+
+        } catch (IOException | SQLException | JRException e) {
+            System.out.println("ProductosView.descargaArchivoPdf() " + e.getMessage());
+        }
     }
 
     public void iniciarSession() {

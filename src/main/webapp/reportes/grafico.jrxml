@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="dc78b7f0-9f51-4414-a97d-8b0dade3b0a8">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="86"/>
+	<queryString>
+		<![CDATA[SELECT  rol.rol_nombre as "nombre" , count(rol.rol_nombre) as 'Cantidad' FROM tbl_usuario 
+INNER JOIN tbl_usuario_has_tbl_rol ON tbl_usuario.usu_usuarioid = tbl_usuario_has_tbl_rol.fk_usuarioid
+INNER JOIN tbl_rol as rol on tbl_usuario_has_tbl_rol.fk_rolid = rol.rol_rolid
+group by rol.rol_nombre]]>
+	</queryString>
+	<field name="nombre" class="java.lang.String"/>
+	<field name="Cantidad" class="java.lang.Long"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="197" splitType="Stretch"/>
+	</title>
+	<columnHeader>
+		<band height="104" splitType="Stretch">
+			<textField>
+				<reportElement x="28" y="10" width="100" height="20" uuid="c54d31c0-b940-4d5b-92f1-ac1d04672e8d"/>
+				<textFieldExpression><![CDATA[$F{nombre}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="146" y="10" width="100" height="20" uuid="b6fd7723-bf96-4bd9-b150-f8d5df3801da"/>
+				<textFieldExpression><![CDATA[$F{Cantidad}]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="341" splitType="Stretch">
+			<elementGroup>
+				<pieChart>
+					<chart>
+						<reportElement x="49" y="66" width="332" height="175" uuid="808b5344-86ab-4965-928f-c79dc4f02b5e"/>
+						<chartTitle/>
+						<chartSubtitle/>
+						<chartLegend/>
+					</chart>
+					<pieDataset>
+						<keyExpression><![CDATA[$F{nombre}.concat(" : ").concat($F{Cantidad}.toString())   ]]></keyExpression>
+						<valueExpression><![CDATA[$F{Cantidad}]]></valueExpression>
+						<labelExpression><![CDATA[$F{nombre}]]></labelExpression>
+					</pieDataset>
+					<piePlot>
+						<plot/>
+						<itemLabel/>
+					</piePlot>
+				</pieChart>
+			</elementGroup>
+		</band>
+	</detail>
+	<summary>
+		<band height="304"/>
+	</summary>
+</jasperReport>
